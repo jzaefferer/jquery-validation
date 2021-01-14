@@ -225,16 +225,25 @@ QUnit.test( "dateISO", function( assert ) {
 	assert.ok( method( "1990-01-31" ), "Valid date" );
 	assert.ok( method( "1990-12-01" ), "Valid date" );
 	assert.ok( method( "1990-12-31" ), "Valid date" );
-	assert.ok( method( "1990/06/06" ), "Valid date" );
-	assert.ok( method( "1990-6-6" ), "Valid date" );
-	assert.ok( method( "1990/6/6" ), "Valid date" );
+	assert.ok( !method( "1990/06/06" ), "Invalid date" );
+	assert.ok( !method( "1990-6-6" ), "Invalid date" );
+	assert.ok( !method( "1990/6/6" ), "Invalid date" );
 	assert.ok( !method( "1990-106-06" ), "Invalid date" );
+	assert.ok( !method( "1990-06-106" ), "Invalid date" );
 	assert.ok( !method( "190-06-06" ), "Invalid date" );
 	assert.ok( !method( "1990-00-06" ), "Invalid date" );
 	assert.ok( !method( "1990-13-01" ), "Invalid date" );
 	assert.ok( !method( "1990-01-00" ), "Invalid date" );
 	assert.ok( !method( "1990-01-32" ), "Invalid date" );
-	assert.ok( !method( "1990-13-32" ), "Invalid date" );
+	assert.ok( !method( "1990-13-01" ), "Invalid date" );
+	assert.ok( !method( "19990-01-01" ), "Invalid date" );
+	assert.ok( method( "1992-02-29" ), "Valid divide-by-4 leap day" );
+	assert.ok( !method( "1990-02-29" ), "Invalid divide-by-4 leap day" );
+	assert.ok( method( "2000-02-29" ), "Valid end-of-century leap day" );
+	assert.ok( !method( "1900-02-29" ), "Invalid end-of-century leap day" );
+	assert.ok( !method( "2100-02-29" ), "Invalid divide-by-100 leap day" );
+	assert.ok( method( "1990-10-31" ), "Valid last day of month" );
+	assert.ok( !method( "1990-09-31" ), "Invalid last day of month" );
 } );
 
 /* Disabled for now, need to figure out how to test localized methods

@@ -1439,7 +1439,36 @@ $.extend( $.validator, {
 
 		// https://jqueryvalidation.org/dateISO-method/
 		dateISO: function( value, element ) {
-			return this.optional( element ) || /^\d{4}[\/\-](0?[1-9]|1[012])[\/\-](0?[1-9]|[12][0-9]|3[01])$/.test( value );
+			if ( this.optional( element ) ) {
+				return true;
+			}
+			var check = false,
+				re = /^(\d{4})(?:-){1}(0[1-9]|1[012])(?:-){1}(0[1-9]|[12][0-9]|3[01])$/,
+				adata,
+				yyyy,
+				mm,
+				dd,
+				isLeap;
+			if ( re.test( value ) ) {
+				check = true;
+
+				// Do a sanity check to ensure the date is valid
+				adata = value.match( re );
+				yyyy = parseInt( adata[ 1 ], 10 );
+				mm = parseInt( adata[ 2 ], 10 );
+				dd = parseInt( adata[ 3 ], 10 );
+
+				if ( ( mm === 4 || mm === 6 || mm === 9 || mm === 11 ) && dd === 31 ) {
+					check = false;
+				} else if ( mm === 2 ) {
+					isLeap = ( yyyy % 4 === 0 && ( yyyy % 100 !== 0 || yyyy % 400 === 0 ) );
+
+					if ( dd > 29 || ( dd === 29 && !isLeap ) ) {
+						check = false;
+					}
+				}
+			}
+			return check;
 		},
 
 		// https://jqueryvalidation.org/number-method/
