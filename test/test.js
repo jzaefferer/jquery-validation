@@ -80,6 +80,15 @@ $.mockjax( {
 	}
 } );
 
+$.mockjax( {
+    url: "stop-request-submit-form.php",
+    response: function() {
+        $( "input[name='username']" ).val( "foobar" ); // Simulate input data changing before request finishes.
+        this.responseText = "true"; // Data is valid.
+    },
+    responseTime: 1
+} );
+
 // Asserts that there is a visible error with the given text for the specified element
 QUnit.assert.hasError = function( element, text, message ) {
 	var errors = $( element ).closest( "form" ).validate().errorsFor( element[ 0 ] ),
@@ -2687,4 +2696,52 @@ QUnit.test( "addMethod, reusing remote in custom method", function( assert ) {
 	assert.strictEqual( v.element( e ), false, "invalid element, nothing entered yet" );
 	e.val( "john.doe@gmail.com" );
 	assert.strictEqual( v.element( e ), true, "still invalid, because remote validation must block until it returns; dependency-mismatch considered as valid though" );
+} );
+
+QUnit.test( "stopRequest() should submit the form once pendingRequests === 0", function( assert ) {
+    var $form = $( "#userForm" );
+    var button = $( ":submit", $form )[ 0 ];
+    var done = assert.async();
+    var v = $form.validate( {
+        debug: true,
+        rules: {
+            username: {
+                remote: "stop-request-submit-form.php"
+            }
+        }
+    } );
+    var i = 1;
+
+    // Register a `submit` event after the one registered by this plugin
+    $form.on( "submit", function() {
+
+        // Ignoring the first submit that was triggered manually by clicking
+        // the submit button. The first submit will be aborted by this plugin
+        // in order to wait for `remote` method to finish validating the input
+        if ( i > 0 ) {
+            i--;
+            return false;
+        }
+
+        // The second submit is the one triggered by `stopRequest()` after the
+        // `remote` method has finished processing its attached input.
+
+        // Compare the button with the `submitButton` property
+        assert.deepEqual(
+            v.submitButton, button, "The submitButton property should be the same as button"
+        );
+
+        var hidden = $form.find( "input:hidden" )[ 0 ];
+        assert.deepEqual( hidden.value, button.value );
+        assert.deepEqual( hidden.name, button.name );
+
+        done();
+
+        return false;
+    } );
+
+    $( "input[name='username']", $form ).val( "something" );
+
+    // Submit the form
+    $( button ).click();
 } );
