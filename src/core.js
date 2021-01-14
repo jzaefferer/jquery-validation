@@ -1519,6 +1519,11 @@ $.extend( $.validator, {
 			if ( decimalPlaces( value ) > decimals || toInt( value ) % toInt( param ) !== 0 ) {
 				valid = false;
 			}
+			
+			//when there is no decimal places. This fixes error Please enter a multiple of 0.
+			if(decimals === 0){
+				valid = true;
+			}
 
 			return this.optional( element ) || valid;
 		},
