@@ -1,6 +1,13 @@
 // Accept a value from a file input based on a required mimetype
 $.validator.addMethod( "accept", function( value, element, param ) {
 
+	if ( typeof param === "string" && !/.+\/.+/.test( param ) ) {
+
+		//The parameter does not have a single MIME.
+		//This rule might hence have been included by an accept tag that contains only extensions, so skip it.
+		return true;
+	}
+
 	// Split mime on commas in case we have multiple types we can accept
 	var typeParam = typeof param === "string" ? param.replace( /\s/g, "" ) : "image/*",
 		optionalValue = this.optional( element ),

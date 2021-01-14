@@ -1794,6 +1794,20 @@ QUnit.test( "file accept - invalid mime type", function( assert ) {
 	assert.equal( proxy(), false, "the selected file for upload has invalid mime type" );
 } );
 
+QUnit.test( "file accept - only extensions", function( assert ) {
+	var input = acceptFileDummyInput( "test.kml", "foobar/vnd.google-earth.kml+xml" ),
+		$form = $( "<form />" ),
+		proxy = $.proxy( $.validator.methods.accept, new $.validator( {}, $form[ 0 ] ), null, input, "kml" );
+	assert.ok( proxy(), "the selected file for upload is validated by extensions." );
+} );
+
+QUnit.test( "file accept - extensions and MIMEs", function( assert ) {
+	var input = acceptFileDummyInput( "test.kml", "foobar/vnd.google-earth.kml+xml" ),
+		$form = $( "<form />" ),
+		proxy = $.proxy( $.validator.methods.accept, new $.validator( {}, $form[ 0 ] ), null, input, "kml,foobar/vnd.google-earth.kml+xml" );
+	assert.ok( proxy(), "the selected file for upload is validated by extensions and MIMEs." );
+} );
+
 QUnit.test( "file size - below max", function( assert ) {
 	var input = acceptFileDummyInput( "test.png", "image/png" ),
 		$form = $( "<form />" ),
