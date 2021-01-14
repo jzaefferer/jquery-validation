@@ -1871,3 +1871,74 @@ QUnit.test( "file maxfiles - too many", function( assert ) {
 		proxy = $.proxy( $.validator.methods.maxfiles, new $.validator( {}, $form[ 0 ] ), null, input, 2 );
 	assert.equal( proxy(), false, "the number of files exceeds the maximum" );
 } );
+
+QUnit.test( "mrtd", function( assert ) {
+	var method = methodTest( "mrtd" );
+	assert.ok( method( "P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L898902C36UTO7408122F1204159ZE184226B<<<<<10" ), "Valid passport" );
+	assert.ok( method( "P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L898902C36UTO7408122<1204159ZE184226B<<<<<10" ), "Valid passport: Unspecified sex" );
+	assert.ok( method( "P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L898902C36UTO7408122F1204159<<<<<<<<<<<<<<08" ), "Valid passport: No personal number and check digit '0'" );
+	assert.ok( method( "P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L898902C36UTO7408122F1204159<<<<<<<<<<<<<<<8" ), "Valid passport: No personal number and check digit '<'" );
+	assert.ok( method( "P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L898902C36UTO74<<<<1F1204159ZE184226B<<<<<18" ), "Valid passport: Birth date not fully known" );
+	assert.ok( method( "P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L898902C36UTO7408122<1204159ZE184226B<<<<<10" ), "Valid passport: Unspecified gender" );
+	assert.ok( !method( "X<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L898902C36UTO7408122F1204159ZE184226B<<<<<10" ), "Invalid passport: Does not start with 'P'" );
+	assert.ok( !method( "P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L898902C36UTO7408122F1204159ZE184226B<<<<10" ), "Invalid passport: Too short" );
+	assert.ok( !method( "P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L898902C36UTO7408122F1204159ZE184226B<<<<<<10" ), "Invalid passport: Too long" );
+	assert.ok( !method( "P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L898902C35UTO7408122F1204159ZE184226B<<<<<10" ), "Invalid passport: Check digit for document number" );
+	assert.ok( !method( "P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L898902C36UTO7408121F1204159ZE184226B<<<<<10" ), "Invalid passport: Check digit for birth date" );
+	assert.ok( !method( "P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L898902C36UTO7408122X1204159ZE184226B<<<<<10" ), "Invalid passport: Sex not 'M', 'F', or '<'" );
+	assert.ok( !method( "P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L898902C36UTO7408122F1204158ZE184226B<<<<<10" ), "Invalid passport: Check digit for expiration date" );
+	assert.ok( !method( "P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L898902C36UTO7408122F1204159ZE184226B<<<<<00" ), "Invalid passport: Check digit for personal number" );
+	assert.ok( !method( "P<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L898902C36UTO7408122F1204159ZE184226B<<<<<19" ), "Invalid passport: Composite check digit" );
+
+	assert.ok( method( "V<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L8988901C4XXX4009078F96121096ZE184226B<<<<<<" ), "Valid format-A visa" );
+	assert.ok( method( "V<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L8988901C4XXX40<<<<8F96121096ZE184226B<<<<<<" ), "Valid format-A visa: Birth date not fully known" );
+	assert.ok( method( "V<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L8988901C4XXX4009078<96121096ZE184226B<<<<<<" ), "Valid format-A visa: Unspecified sex" );
+	assert.ok( !method( "X<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L8988901C4XXX4009078F96121096ZE184226B<<<<<<" ), "Invalid format-A visa: Does not start with 'V'" );
+	assert.ok( !method( "V<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L8988901C4XXX4009078F96121096ZE184226B<<<<<" ), "Invalid format-A visa: Too short" );
+	assert.ok( !method( "V<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L8988901C4XXX4009078F96121096ZE184226B<<<<<<<" ), "Invalid format-A visa: Too long" );
+	assert.ok( !method( "V<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L8988901C3XXX4009078F96121096ZE184226B<<<<<<" ), "Invalid format-A visa: Check digit for visa number" );
+	assert.ok( !method( "V<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L8988901C4XXX4009077F96121096ZE184226B<<<<<<" ), "Invalid format-A visa: Check digit for birth date" );
+	assert.ok( !method( "V<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L8988901C4XXX4009078X96121096ZE184226B<<<<<<" ), "Invalid format-A visa: Sex not 'M', 'F', or '<'" );
+	assert.ok( !method( "V<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<<<<<<<<<L8988901C4XXX4009078F96121086ZE184226B<<<<<<" ), "Invalid format-A visa: Check digit for expiration date" );
+
+	assert.ok( method( "V<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<L8988901C4XXX4009078F96121096ZE18422" ), "Valid format-B visa" );
+	assert.ok( method( "V<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<L8988901C4XXX40<<<<8F96121096ZE18422" ), "Valid format-B visa: Birth date not fully known" );
+	assert.ok( method( "V<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<L8988901C4XXX4009078<96121096ZE18422" ), "Valid format-B visa: Unspecified sex" );
+	assert.ok( !method( "X<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<L8988901C4XXX4009078F9612109<<<<<<<<" ), "Invalid format-B visa: Does not start with 'V'" );
+	assert.ok( !method( "V<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<L8988901C4XXX4009078F9612109<<<<<<<" ), "Invalid format-B visa: Too short" );
+	assert.ok( !method( "V<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<L8988901C4XXX4009078F9612109<<<<<<<<<" ), "Invalid format-B visa: Too long" );
+	assert.ok( !method( "V<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<L8988901C3XXX4009078F9612109<<<<<<<<" ), "Invalid format-B visa: Check digit for visa number" );
+	assert.ok( !method( "V<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<L8988901C4XXX4009077F9612109<<<<<<<<" ), "Invalid format-B visa: Check digit for birth date" );
+	assert.ok( !method( "V<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<L8988901C4XXX4009078X9612109<<<<<<<<" ), "Invalid format-B visa: Sex not 'M', 'F', or '<'" );
+	assert.ok( !method( "V<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<L8988901C4XXX4009078F9612108<<<<<<<<" ), "Invalid format-B visa: Check digit for expiration date" );
+
+	assert.ok( method( "A<UTOD231458907<<<<<<<<<<<<<<<7408122F1204159UTO<<<<<<<<<<<6ERIKSSON<<ANNA<MARIA<<<<<<<<<<" ), "Valid size 1 official travel document: 'A' type" );
+	assert.ok( method( "C<UTOD231458907<<<<<<<<<<<<<<<7408122F1204159UTO<<<<<<<<<<<6ERIKSSON<<ANNA<MARIA<<<<<<<<<<" ), "Valid size 1 official travel document: 'C' type" );
+	assert.ok( method( "I<UTOD231458907<<<<<<<<<<<<<<<7408122F1204159UTO<<<<<<<<<<<6ERIKSSON<<ANNA<MARIA<<<<<<<<<<" ), "Valid size 1 official travel document: 'I' type" );
+	assert.ok( method( "I<UTOD231458907<<<<<<<<<<<<<<<74<<<<1F1204159UTO<<<<<<<<<<<4ERIKSSON<<ANNA<MARIA<<<<<<<<<<" ), "Valid size 1 official travel document: Birth date not fully known" );
+	assert.ok( method( "I<UTOD231458907<<<<<<<<<<<<<<<7408122<1204159UTO<<<<<<<<<<<6ERIKSSON<<ANNA<MARIA<<<<<<<<<<" ), "Valid size 1 official travel document: Unspecified sex" );
+	assert.ok( !method( "X<UTOD231458907<<<<<<<<<<<<<<<7408122F1204159UTO<<<<<<<<<<<6ERIKSSON<<ANNA<MARIA<<<<<<<<<<" ), "Invalid size 1 official travel document: Does not begin with 'A', 'C', or 'I'" );
+	assert.ok( !method( "A<UTOD231458907<<<<<<<<<<<<<<<7408122F1204159UTO<<<<<<<<<<<6ERIKSSON<<ANNA<MARIA<<<<<<<<<" ), "Invalid size 1 official travel document: Too short" );
+	assert.ok( !method( "A<UTOD231458907<<<<<<<<<<<<<<<7408122F1204159UTO<<<<<<<<<<<6ERIKSSON<<ANNA<MARIA<<<<<<<<<<<" ), "Invalid size 1 official travel document: Too long" );
+	assert.ok( !method( "IVUTOD231458907<<<<<<<<<<<<<<<7408122F1204159UTO<<<<<<<<<<<6ERIKSSON<<ANNA<MARIA<<<<<<<<<<" ), "Invalid size 1 official travel document: 'V' cannot be used in document type" );
+	assert.ok( !method( "I<UTOD231458906<<<<<<<<<<<<<<<7408122F1204159UTO<<<<<<<<<<<6ERIKSSON<<ANNA<MARIA<<<<<<<<<<" ), "Invalid size 1 official travel document: Check digit for document number" );
+	assert.ok( !method( "I<UTOD231458907<<<<<<<<<<<<<<<7408121F1204159UTO<<<<<<<<<<<6ERIKSSON<<ANNA<MARIA<<<<<<<<<<" ), "Invalid size 1 official travel document: Check digit for birth date" );
+	assert.ok( !method( "I<UTOD231458907<<<<<<<<<<<<<<<7408122X1204159UTO<<<<<<<<<<<6ERIKSSON<<ANNA<MARIA<<<<<<<<<<" ), "Invalid size 1 official travel document: Sex not 'M', 'F', or '<'" );
+	assert.ok( !method( "I<UTOD231458907<<<<<<<<<<<<<<<7408122F1204158UTO<<<<<<<<<<<6ERIKSSON<<ANNA<MARIA<<<<<<<<<<" ), "Invalid size 1 official travel document: Check digit for expiration date" );
+	assert.ok( !method( "I<UTOD231458907<<<<<<<<<<<<<<<7408122F1204159UTO<<<<<<<<<<<5ERIKSSON<<ANNA<MARIA<<<<<<<<<<" ), "Invalid size 1 official travel document: Composite check digit" );
+
+	assert.ok( method( "A<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<D231458907UTO7408122F1204159<<<<<<<6" ), "Valid size 2 official travel document: 'A' type" );
+	assert.ok( method( "C<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<D231458907UTO7408122F1204159<<<<<<<6" ), "Valid size 2 official travel document: 'C' type" );
+	assert.ok( method( "I<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<D231458907UTO7408122F1204159<<<<<<<6" ), "Valid size 2 official travel document: 'I' type" );
+	assert.ok( method( "I<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<D231458907UTO74<<<<1F1204159<<<<<<<4" ), "Valid size 2 official travel document: Birth date not fully known" );
+	assert.ok( method( "I<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<D231458907UTO7408122<1204159<<<<<<<6" ), "Valid size 2 official travel document: Unspecified sex" );
+	assert.ok( !method( "X<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<D231458907UTO7408122F1204159<<<<<<<6" ), "Invalid size 2 official travel document: Does not begin with 'A', 'C', or 'I'" );
+	assert.ok( !method( "I<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<D231458907UTO7408122F1204159<<<<<<6" ), "Invalid size 2 official travel document: Too short" );
+	assert.ok( !method( "I<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<D231458907UTO7408122F1204159<<<<<<<<6" ), "Invalid size 2 official travel document: Too long" );
+	assert.ok( !method( "IVUTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<D231458907UTO7408122F1204159<<<<<<<6" ), "Invalid size 2 official travel document: 'V' cannot be used in document type" );
+	assert.ok( !method( "I<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<D231458906UTO7408122F1204159<<<<<<<6" ), "Invalid size 2 official travel document: Check digit for document number" );
+	assert.ok( !method( "I<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<D231458907UTO7408121F1204159<<<<<<<6" ), "Invalid size 2 official travel document: Check digit for birth date" );
+	assert.ok( !method( "I<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<D231458907UTO7408122X1204159<<<<<<<6" ), "Invalid size 2 official travel document: Sex not 'M', 'F', or '<'" );
+	assert.ok( !method( "I<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<D231458907UTO7408122F1204158<<<<<<<6" ), "Invalid size 2 official travel document: Check digit for expiration date" );
+	assert.ok( !method( "I<UTOERIKSSON<<ANNA<MARIA<<<<<<<<<<<D231458907UTO7408122F1204159<<<<<<<5" ), "Invalid size 2 official travel document: Composite check digit" );
+} );
