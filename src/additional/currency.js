@@ -38,4 +38,4 @@ $.validator.addMethod( "currency", function( value, element, param ) {
     regex = new RegExp( regex );
     return this.optional( element ) || regex.test( value );
 
-}, "Please specify a valid currency" );
+}, "Please specify a valid currency." );

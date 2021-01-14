@@ -62,4 +62,4 @@ $.validator.addMethod( "cpfBR", function( value, element ) {
 	}
 	return false;
 
-}, "Please specify a valid CPF number" );
+}, "Please specify a valid CPF number." );

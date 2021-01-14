@@ -20,4 +20,4 @@ $.validator.addMethod( "phonePL", function( phone_number, element ) {
 	phone_number = phone_number.replace( /\s+/g, "" );
 	var regexp = /^(?:(?:(?:\+|00)?48)|(?:\(\+?48\)))?(?:1[2-8]|2[2-69]|3[2-49]|4[1-68]|5[0-9]|6[0-35-9]|[7-8][1-9]|9[145])\d{7}$/;
 	return this.optional( element ) || regexp.test( phone_number );
-}, "Please specify a valid phone number" );
+}, "Please specify a valid phone number." );

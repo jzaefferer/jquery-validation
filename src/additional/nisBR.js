@@ -54,4 +54,4 @@ $.validator.addMethod( "nisBR", function( value ) {
 	} else {
 		return false;
 	}
-}, "Please specify a valid NIS/PIS number" );
+}, "Please specify a valid NIS/PIS number." );

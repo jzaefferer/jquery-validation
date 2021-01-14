@@ -71,4 +71,4 @@ $.validator.addMethod( "cnpjBR", function( value, element ) {
 
 	return true;
 
-}, "Please specify a CNPJ value number" );
+}, "Please specify a CNPJ value number." );

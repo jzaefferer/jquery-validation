@@ -133,4 +133,4 @@ $.validator.addMethod( "iban", function( value, element ) {
 		cRest = cOperator % 97;
 	}
 	return cRest === 1;
-}, "Please specify a valid IBAN" );
+}, "Please specify a valid IBAN." );

@@ -23,4 +23,4 @@ $.validator.addMethod( "bankaccountNL", function( value, element ) {
 		sum = sum + factor * digit;
 	}
 	return sum % 11 === 0;
-}, "Please specify a valid bank account number" );
+}, "Please specify a valid bank account number." );
