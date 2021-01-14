@@ -670,8 +670,16 @@ $.extend( $.validator, {
 		},
 
 		errors: function() {
+			var context = this;
+			var getElementsNames = function ( elements ) {
+				return elements.map( function () { return context.idOrName( this ) });
+			}.bind( this );
+
+			var names = getElementsNames( this.elements() ).toArray();
 			var errorClass = this.settings.errorClass.split( " " ).join( "." );
-			return $( this.settings.errorElement + "." + errorClass, this.errorContext );
+			var result = $( this.settings.errorElement + "." + errorClass, this.errorContext )
+				.filter( function ( i, e ) { return names.includes( $( e ).attr( "for" )); });
+			return $( result, this.errorContext );
 		},
 
 		resetInternals: function() {
