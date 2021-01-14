@@ -55,6 +55,8 @@ $.validator.addMethod( "cifES", function( value, element ) {
 		return true;
 	}
 
+	value = value.toUpperCase();
+
 	var cifRegEx = new RegExp( /^([ABCDEFGHJKLMNPQRSUVW])(\d{7})([0-9A-J])$/gi );
 	var letter  = value.substring( 0, 1 ), // [ T ]
 		number  = value.substring( 1, 8 ), // [ P ][ P ][ N ][ N ][ N ][ N ][ N ]

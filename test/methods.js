@@ -1555,7 +1555,7 @@ QUnit.test( "cifES", function( assert ) {
 	assert.ok( method( "S5141387J" ), "CIF valid" );
 	assert.ok( method( "S9803881C" ), "CIF valid" );
 	assert.ok( !method( "S98038813" ), "CIF invalid: digit control must be a letter (C)" );
-	assert.ok( method( "s98038813" ), "CIF valid: lower case" );
+	assert.ok( !method( "s98038813" ), "CIF invalid: lower case but digit control must be a letter (C)" );
 
 	assert.ok( !method( "X48911572" ), "CIF invalid: starts with X" );
 	assert.ok( !method( "Y48911572" ), "CIF invalid: starts with Y" );
