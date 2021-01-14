@@ -657,6 +657,11 @@ $.extend( $.validator, {
 
 				// Select only the first element for each name, and only those with rules specified
 				if ( name in rulesCache || !validator.objectLength( $( this ).rules() ) ) {
+
+					// If the elment don't need check,just rest it's class
+					if ( this.settings.unhighlight ) {
+						validator.settings.unhighlight( $( this ), validator.settings.errorClass, validator.settings.validClass );
+					}
 					return false;
 				}
 
@@ -1461,7 +1466,9 @@ $.extend( $.validator, {
 		// https://jqueryvalidation.org/maxlength-method/
 		maxlength: function( value, element, param ) {
 			var length = Array.isArray( value ) ? value.length : this.getLength( value, element );
-			return this.optional( element ) || length <= param;
+
+			// If param is equal to 0, it means maxlength has no limitation
+			return this.optional( element ) || param === 0 || length <= param;
 		},
 
 		// https://jqueryvalidation.org/rangelength-method/

@@ -327,8 +327,12 @@ QUnit.test( "maxlength", function( assert ) {
 	var v = jQuery( "#form" ).validate(),
 		method = $.validator.methods.maxlength,
 		param = 4,
-		e = $( "#text1, #text2, #text3" );
+		e = $( "#emptyText" );
 
+	assert.ok( method.call( v, e[ 0 ].value, e[ 0 ], 0 ), "Valid text input" );
+
+	e = $( "#text1, #text2, #text3" );
+	assert.ok( method.call( v, e[ 0 ].value, e[ 0 ], 0 ), "Valid text input" );
 	assert.ok( method.call( v, e[ 0 ].value, e[ 0 ], param ), "Valid text input" );
 	assert.ok( method.call( v, e[ 1 ].value, e[ 1 ], param ), "Valid text input" );
 	assert.ok( !method.call( v, e[ 2 ].value, e[ 2 ], param ), "Invalid text input" );
