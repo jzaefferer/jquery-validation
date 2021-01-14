@@ -454,7 +454,15 @@ $.extend( $.validator, {
 		checkForm: function() {
 			this.prepareForm();
 			for ( var i = 0, elements = ( this.currentElements = this.elements() ); elements[ i ]; i++ ) {
-				this.check( elements[ i ] );
+
+				//Fix validation for name array within form
+				if ( this.findByName( elements[ i ].name ).length !== undefined && this.findByName( elements[ i ].name ).length > 1 ) {
+					for ( var cnt = 0; cnt < this.findByName( elements[ i ].name ).length; cnt++ ) {
+						this.check( this.findByName( elements[ i ].name )[ cnt ] );
+					}
+				} else {
+					this.check( elements[ i ] );
+				}
 			}
 			return this.valid();
 		},
