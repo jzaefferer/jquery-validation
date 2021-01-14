@@ -22,5 +22,6 @@ $.extend( $.validator.messages, {
 	min: $.validator.format( "Por favor, escribe un valor mayor o igual a {0}." ),
 	nifES: "Por favor, escribe un NIF válido.",
 	nieES: "Por favor, escribe un NIE válido.",
-	cifES: "Por favor, escribe un CIF válido."
+	cifES: "Por favor, escribe un CIF válido.",
+	semver2: "Por favor, escriba una versión semántica válida."
 } );

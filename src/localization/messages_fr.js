@@ -48,5 +48,6 @@ $.extend( $.validator.messages, {
 	nieES: "Veuillez fournir un numéro NIE valide.",
 	cifES: "Veuillez fournir un numéro CIF valide.",
 	postalCodeCA: "Veuillez fournir un code postal valide.",
-	pattern: "Format non valide."
+	pattern: "Format non valide.",
+	semver2: "Veuillez fournir une version sémantique valide."
 } );
