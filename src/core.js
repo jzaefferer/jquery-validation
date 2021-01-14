@@ -1143,21 +1143,9 @@ $.extend( $.validator, {
 			$( this.currentForm )
 				.off( ".validate" )
 				.removeData( "validator" )
-				.find( ".validate-equalTo-blur" )
-					.off( ".validate-equalTo" )
-					.removeClass( "validate-equalTo-blur" )
-				.find( ".validate-lessThan-blur" )
-					.off( ".validate-lessThan" )
-					.removeClass( "validate-lessThan-blur" )
-				.find( ".validate-lessThanEqual-blur" )
-					.off( ".validate-lessThanEqual" )
-					.removeClass( "validate-lessThanEqual-blur" )
-				.find( ".validate-greaterThanEqual-blur" )
-					.off( ".validate-greaterThanEqual" )
-					.removeClass( "validate-greaterThanEqual-blur" )
-				.find( ".validate-greaterThan-blur" )
-					.off( ".validate-greaterThan" )
-					.removeClass( "validate-greaterThan-blur" );
+				.find( ".validate-custom-blur" )
+					.off( ".validate-custom-blur" )
+					.removeClass( "validate-custom-blur" );
 		}
 
 	},
@@ -1528,8 +1516,8 @@ $.extend( $.validator, {
 
 			// Bind to the blur event of the target in order to revalidate whenever the target field is updated
 			var target = $( param );
-			if ( this.settings.onfocusout && target.not( ".validate-equalTo-blur" ).length ) {
-				target.addClass( "validate-equalTo-blur" ).on( "blur.validate-equalTo", function() {
+			if ( this.settings.onfocusout && target.not( ".validate-custom-blur" ).length ) {
+				target.addClass( "validate-custom-blur" ).on( "blur.validate-custom-blur", function() {
 					$( element ).valid();
 				} );
 			}

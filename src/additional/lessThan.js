@@ -1,8 +1,8 @@
 $.validator.addMethod( "lessThan", function( value, element, param ) {
     var target = $( param );
 
-    if ( this.settings.onfocusout && target.not( ".validate-lessThan-blur" ).length ) {
-        target.addClass( "validate-lessThan-blur" ).on( "blur.validate-lessThan", function() {
+    if ( this.settings.onfocusout && target.not( ".validate-custom-blur" ).length ) {
+        target.addClass( "validate-custom-blur" ).on( "blur.validate-custom-blur", function() {
             $( element ).valid();
         } );
     }

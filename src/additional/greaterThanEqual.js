@@ -1,8 +1,8 @@
 $.validator.addMethod( "greaterThanEqual", function( value, element, param ) {
     var target = $( param );
 
-    if ( this.settings.onfocusout && target.not( ".validate-greaterThanEqual-blur" ).length ) {
-        target.addClass( "validate-greaterThanEqual-blur" ).on( "blur.validate-greaterThanEqual", function() {
+    if ( this.settings.onfocusout && target.not( ".validate-custom-blur" ).length ) {
+        target.addClass( "validate-custom-blur" ).on( "blur.validate-custom-blur", function() {
             $( element ).valid();
         } );
     }
