@@ -1069,6 +1069,28 @@ $.extend( $.validator, {
 			}
 			return value.length;
 		},
+	
+		getDateValue: function( value, type ) {
+			switch (type) {
+				case 'date':
+					value = (new Date(value)).getDate();
+					break;
+				case 'datetime':
+				case 'datetime-local':
+					value = (new Date(value)).getTime() / 1000;
+					break;
+				case 'month':
+					value = (new Date(value + '-01')).getMonth() + 1;
+					break;
+				case 'time':
+					value = (new Date('2020-01-01 ' + value)).getTime() / 1000;
+					break;
+				default:
+					value = false;
+			}
+
+			return value;
+		},
 
 		depend: function( param, element ) {
 			return this.dependTypes[ typeof param ] ? this.dependTypes[ typeof param ]( param, element ) : true;
@@ -1472,12 +1494,76 @@ $.extend( $.validator, {
 
 		// https://jqueryvalidation.org/min-method/
 		min: function( value, element, param ) {
-			return this.optional( element ) || value >= param;
+			var valid = true,
+				type = $( element ).attr( "type" );
+
+			switch (type) {
+				case 'week':
+					var re = new RegExp("^([0-9]{4})-W([0-9]+)$");
+					var mVal = re.exec(value),
+					mParam = re.exec(value);
+
+					valid = false;
+
+					if (mVal !== null && mParam !== null) {
+						if (mVal[1] > mParam[1] || (mVal[1] >= mParam[1] && parseInt(mVal[2]) >= parseInt(mParam[2]))) {
+							valid = true;
+						}
+					}
+					break;
+				case 'datetime':
+				case 'datetime-local':
+				case 'date':
+				case 'month':
+				case 'time':
+					value = this.getDateValue(value, type);
+					param = this.getDateValue(param, type);
+				default:
+					if (value !== false && param !== false) {
+						valid = value >= param;
+					} else {
+						valid = false;
+					}
+			}
+
+			return this.optional( element ) || valid;
 		},
 
 		// https://jqueryvalidation.org/max-method/
 		max: function( value, element, param ) {
-			return this.optional( element ) || value <= param;
+			var valid = true,
+				type = $( element ).attr( "type" );
+
+			switch (type) {
+				case 'week':
+					var re = new RegExp("^([0-9]{4})-W([0-9]+)$");
+					var mVal = re.exec(value),
+					mParam = re.exec(value);
+
+					valid = false;
+
+					if (mVal !== null && mParam !== null) {
+						if (mVal[1] < mParam[1] || (mVal[1] <= mParam[1] && parseInt(mVal[2]) <= parseInt(mParam[2]))) {
+							valid = true;
+						}
+					}
+					break;
+				case 'datetime':
+				case 'datetime-local':
+				case 'date':
+				case 'month':
+				case 'time':
+					value = this.getDateValue(value, type);
+					param = this.getDateValue(param, type);
+				default:
+					if (value !== false && param !== false) {
+						valid = value <= param;
+					} else {
+						valid = false;
+					}
+			}
+
+			return this.optional( element ) || valid;
 		},
 
 		// https://jqueryvalidation.org/range-method/
@@ -1488,10 +1574,6 @@ $.extend( $.validator, {
 		// https://jqueryvalidation.org/step-method/
 		step: function( value, element, param ) {
 			var type = $( element ).attr( "type" ),
-				errorMessage = "Step attribute on input type " + type + " is not supported.",
-				supportedTypes = [ "text", "number", "range" ],
-				re = new RegExp( "\\b" + type + "\\b" ),
-				notSupported = type && !re.test( supportedTypes.join() ),
 				decimalPlaces = function( num ) {
 					var match = ( "" + num ).match( /(?:\.(\d+))?$/ );
 					if ( !match ) {
@@ -1505,19 +1587,30 @@ $.extend( $.validator, {
 					return Math.round( num * Math.pow( 10, decimals ) );
 				},
 				valid = true,
-				decimals;
+				decimals = 0;
 
-			// Works only for text, number and range input types
-			// TODO find a way to support input types date, datetime, datetime-local, month, time and week
-			if ( notSupported ) {
-				throw new Error( errorMessage );
-			}
+			if (param !== 'any') {
+				decimals = decimalPlaces(param);
 
-			decimals = decimalPlaces( param );
+				switch (type) {
+					case 'week':
+						var re = new RegExp("^[0-9]{4}-W([0-9]+)$");
+						var m = re.exec(value);
 
-			// Value can't have too many decimals
-			if ( decimalPlaces( value ) > decimals || toInt( value ) % toInt( param ) !== 0 ) {
-				valid = false;
+						valid = m !== null && toInt(m[1]) % toInt(param) !== 0;
+						break;
+					case 'datetime':
+					case 'datetime-local':
+					case 'date':
+					case 'month':
+					case 'time':
+						if ((value = this.getDateValue(value, type)) !== false) {
+							valid = !(toInt(value) % toInt(param) !== 0);
+						}
+					break;
+					default:
+						valid = !(decimalPlaces(value) > decimals || toInt(value) % toInt(param) !== 0);
+				}
 			}
 
 			return this.optional( element ) || valid;
