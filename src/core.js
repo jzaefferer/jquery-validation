@@ -1493,7 +1493,11 @@ $.extend( $.validator, {
 				re = new RegExp( "\\b" + type + "\\b" ),
 				notSupported = type && !re.test( supportedTypes.join() ),
 				decimalPlaces = function( num ) {
-					var match = ( "" + num ).match( /(?:\.(\d+))?$/ );
+					var strNum = "" + num;
+					if ( strNum.indexOf( "e-" ) > 0 ) {
+						strNum = num.toFixed( parseInt( strNum.split( "e-" )[ 1 ], 10 ) );
+					}
+					var match = strNum.match( /(?:\.(\d+))?$/ );
 					if ( !match ) {
 						return 0;
 					}
