@@ -374,10 +374,10 @@ QUnit.test( "rules(), global/local normalizer", function( assert ) {
 
 	// Validate only the username and the url elements.
 	username.valid();
-	assert.equal( v.invalidElements()[ 0 ], username[ 0 ], "The username should be invalid" );
+	assert.equal( v.invalidElements().filter( username )[ 0 ], username[ 0 ], "The username should be invalid" );
 
 	urlc.valid();
-	assert.equal( v.invalidElements()[ 0 ], urlc[ 0 ], "The url should be invalid" );
+	assert.equal( v.invalidElements().filter( urlc )[ 0 ], urlc[ 0 ], "The url should be invalid" );
 
 	assert.equal( v.numberOfInvalids(), 2, "There is two invalid elements" );
 

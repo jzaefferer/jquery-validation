@@ -702,7 +702,7 @@ QUnit.test( "remote, highlight all invalid fields", function( assert ) {
 	}, 500 );
 } );
 QUnit.test( "remote, unhighlighted should be invoked after being highlighted/invalid", function( assert ) {
-	assert.expect( 6 );
+	assert.expect( 7 );
 
 	var done1 = assert.async(),
 		done2 = assert.async(),
