@@ -423,16 +423,25 @@ $.extend( $.validator, {
 				}
 			}
 
+			var TEXT_EVENTS = "focusin.validate focusout.validate keyup.validate";
+			var TEXT_FILTER = ":text, [type='password'], [type='file'], select, textarea, [type='number'], [type='search'], " +
+				"[type='tel'], [type='url'], [type='email'], [type='datetime'], [type='date'], [type='month'], " +
+				"[type='week'], [type='time'], [type='datetime-local'], [type='range'], [type='color'], " +
+				"[type='radio'], [type='checkbox'], [contenteditable], [type='button']";
+			var SELECT_EVENTS = "click.validate";
+			var SELECT_FILTER = "select, option, [type='radio'], [type='checkbox']";
 			$( this.currentForm )
-				.on( "focusin.validate focusout.validate keyup.validate",
-					":text, [type='password'], [type='file'], select, textarea, [type='number'], [type='search'], " +
-					"[type='tel'], [type='url'], [type='email'], [type='datetime'], [type='date'], [type='month'], " +
-					"[type='week'], [type='time'], [type='datetime-local'], [type='range'], [type='color'], " +
-					"[type='radio'], [type='checkbox'], [contenteditable], [type='button']", delegate )
+				.on( TEXT_EVENTS, TEXT_FILTER, delegate )
 
 				// Support: Chrome, oldIE
 				// "select" is provided as event.target when clicking a option
-				.on( "click.validate", "select, option, [type='radio'], [type='checkbox']", delegate );
+				.on( SELECT_EVENTS, SELECT_FILTER, delegate );
+			$( this.currentForm.elements ).filter( function( i, el ) {
+				return $( el ).closest( el.form ).length === 0;
+			} )
+				.filter( TEXT_FILTER )
+					.on( TEXT_EVENTS, delegate ).end()
+				.filter( SELECT_FILTER ).on( SELECT_EVENTS, delegate );
 
 			if ( this.settings.invalidHandler ) {
 				$( this.currentForm ).on( "invalid-form.validate", this.settings.invalidHandler );
@@ -632,8 +641,13 @@ $.extend( $.validator, {
 				rulesCache = {};
 
 			// Select all valid inputs inside the form (no submit or reset buttons)
-			return $( this.currentForm )
-			.find( "input, select, textarea, [contenteditable]" )
+			var $elements;
+			if ( this.currentForm.elements ) {
+				$elements = $( this.currentForm ).find( "[contenteditable]" ).add( this.currentForm.elements );
+			} else {
+				$elements = $( this.currentForm ).find( "input, select, textarea, [contenteditable]" );
+			}
+			return $elements
 			.not( ":submit, :reset, :image, :disabled" )
 			.not( this.settings.ignore )
 			.filter( function() {
@@ -669,9 +683,9 @@ $.extend( $.validator, {
 			return $( selector )[ 0 ];
 		},
 
-		errors: function() {
+		errors: function( errorContext ) {
 			var errorClass = this.settings.errorClass.split( " " ).join( "." );
-			return $( this.settings.errorElement + "." + errorClass, this.errorContext );
+			return $( this.settings.errorElement + "." + errorClass, errorContext ? errorContext : this.errorContext  );
 		},
 
 		resetInternals: function() {
@@ -1023,9 +1037,17 @@ $.extend( $.validator, {
 					.replace( /\s+/g, ", #" );
 			}
 
-			return this
+			var errors = this
 				.errors()
 				.filter( selector );
+
+			if ( errors.length === 0 && $( element ).closest( element.form ).length === 0 ) {
+				errors = this
+					.errors( $( element ).parent() )
+					.filter( selector );
+			}
+
+			return errors;
 		},
 
 		// See https://api.jquery.com/category/selectors/, for CSS
