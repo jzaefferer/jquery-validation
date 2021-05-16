@@ -107,6 +107,7 @@ grunt.initConfig( {
 				"Gruntfile.js",
 				"lib/**/*.*",
 				"package.json",
+				"LICENSE.md",
 				"README.md",
 				"src/**/*.*",
 				"test/**/*.*"
