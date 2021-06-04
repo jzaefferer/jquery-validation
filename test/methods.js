@@ -412,6 +412,15 @@ QUnit.test( "#1760 - step modulo/remainder regression tests", function( assert )
 	}
 } );
 
+QUnit.test( "#2276 - less than -6 step in number input works wrong", function( assert ) {
+	var v = jQuery( "#form" ).validate(),
+		method = $.validator.methods.step,
+		param = 1e-8,
+		e = $( "#value5" );
+
+	assert.ok( method.call( v, e[ 0 ].value, e[ 0 ], param ), "Valid text input" );
+} );
+
 QUnit.test( "lessThan", function( assert ) {
 	var v = jQuery( "#form" ).validate(),
 		method = $.validator.methods.lessThan,
